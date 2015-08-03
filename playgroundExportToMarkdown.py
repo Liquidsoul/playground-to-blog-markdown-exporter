@@ -31,8 +31,16 @@ def exportPageContentToMarkdown(content_stream, output_stream):
     import re
     empty_line_pattern = re.compile(r'^\s*$')
     markdown_pattern = re.compile(r'(\s*)//:\s(?P<content>.*)')
+    page_links_pattern = re.compile(r'\[(Next|Previous)\]\(@(next|previous)\)')
     code_block = False
     for l in lines:
+        if page_links_pattern.search(l) is not None:
+            # we skip lines containing playground page links
+            continue
+
+        if empty_line_pattern.match(l) is not None:
+            output_stream.write(l)
+            continue
         match = markdown_pattern.match(l)
         if match is None:
             if not code_block:

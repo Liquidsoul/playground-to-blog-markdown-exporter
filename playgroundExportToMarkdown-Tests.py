@@ -102,5 +102,41 @@ After test line
         output_stream.close()
         intput_stream.close()
 
+    def testExportPageContentToMarkdown_removePageLinks(self):
+        intput_stream = StringIO(r'''//: [Next](@next)
+//: Some Markdown
+//: [Previous](@previous)
+''')
+        expected_output_string = r'''Some Markdown
+'''
+        output_stream = StringIO()
+
+        playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
+        
+        self.assertEqual(expected_output_string, output_stream.getvalue())
+
+        output_stream.close()
+        intput_stream.close()
+
+    def testExportPageContentToMarkdown_emptylinesBetweenMarkdownBlocks(self):
+        intput_stream = StringIO(r'''//: First markdown block
+//: some more markdown
+
+//: Second markdown block
+''')
+        expected_output_string = r'''First markdown block
+some more markdown
+
+Second markdown block
+'''
+        output_stream = StringIO()
+
+        playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
+        
+        self.assertEqual(expected_output_string, output_stream.getvalue(), msg=">>>\n%s\n===\n%s\n<<<'" % (expected_output_string, output_stream.getvalue()))
+
+        output_stream.close()
+        intput_stream.close()
+
 if __name__ == '__main__':
     unittest.main()
