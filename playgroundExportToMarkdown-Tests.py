@@ -34,15 +34,8 @@ class playgroundExportToMarkdownTestCase(unittest.TestCase):
 
         stream.close()
 
-    def testExportPageContentToMarkdown_fullMarkdown(self):
-        intput_stream = StringIO('''//: This is a markdown text
-//: on multiple
-//: lines.
-''')
-        expected_output_string = '''This is a markdown text
-on multiple
-lines.
-'''
+    def _exportPageContentToMarkdownTest(self, input_string, expected_output_string):
+        intput_stream = StringIO(input_string)
         output_stream = StringIO()
 
         playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
@@ -52,12 +45,20 @@ lines.
         output_stream.close()
         intput_stream.close()
 
+    def testExportPageContentToMarkdown_fullMarkdown(self):
+        self._exportPageContentToMarkdownTest('''//: This is a markdown text
+//: on multiple
+//: lines.
+''', '''This is a markdown text
+on multiple
+lines.
+''')
+
     def testExportPageContentToMarkdown_codeNoLineBreaks(self):
-        intput_stream = StringIO('''//: This is the line before
+        self._exportPageContentToMarkdownTest('''//: This is the line before
 Swift code
 //: This is the line after
-''')
-        expected_output_string = '''This is the line before
+''', '''This is the line before
 %(start_code_tag)s
 Swift code
 %(end_code_tag)s
@@ -65,24 +66,15 @@ This is the line after
 ''' % {
     'start_code_tag': playgroundExportToMarkdown.start_code_tag,
     'end_code_tag': playgroundExportToMarkdown.end_code_tag
-}
-        output_stream = StringIO()
-
-        playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
-
-        self.assertEqual(expected_output_string, output_stream.getvalue(), msg=">>>\n%s\n===\n%s\n<<<'" % (expected_output_string, output_stream.getvalue()))
-
-        output_stream.close()
-        intput_stream.close()
+})
 
     def testExportPageContentToMarkdown_codeWithEmptyLines(self):
-        intput_stream = StringIO(r'''//: Before test line
+        self._exportPageContentToMarkdownTest('''//: Before test line
 Swift code first line
 
 Swift code last line
 //: After test line
-''')
-        expected_output_string = r'''Before test line
+''', '''Before test line
 %(start_code_tag)s
 Swift code first line
 
@@ -92,51 +84,25 @@ After test line
 ''' % {
     'start_code_tag': playgroundExportToMarkdown.start_code_tag,
     'end_code_tag': playgroundExportToMarkdown.end_code_tag
-}
-        output_stream = StringIO()
-
-        playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
-
-        self.assertEqual(expected_output_string, output_stream.getvalue(), msg=">>>\n%s\n===\n%s\n<<<'" % (expected_output_string, output_stream.getvalue()))
-
-        output_stream.close()
-        intput_stream.close()
+})
 
     def testExportPageContentToMarkdown_removePageLinks(self):
-        intput_stream = StringIO(r'''//: [Next](@next)
+        self._exportPageContentToMarkdownTest('''//: [Next](@next)
 //: Some Markdown
 //: [Previous](@previous)
+''', '''Some Markdown
 ''')
-        expected_output_string = r'''Some Markdown
-'''
-        output_stream = StringIO()
-
-        playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
-        
-        self.assertEqual(expected_output_string, output_stream.getvalue(), msg=">>>\n%s\n===\n%s\n<<<'" % (expected_output_string, output_stream.getvalue()))
-
-        output_stream.close()
-        intput_stream.close()
 
     def testExportPageContentToMarkdown_emptylinesBetweenMarkdownBlocks(self):
-        intput_stream = StringIO(r'''//: First markdown block
+        self._exportPageContentToMarkdownTest('''//: First markdown block
 //: some more markdown
 
 //: Second markdown block
-''')
-        expected_output_string = r'''First markdown block
+''', '''First markdown block
 some more markdown
 
 Second markdown block
-'''
-        output_stream = StringIO()
-
-        playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
-        
-        self.assertEqual(expected_output_string, output_stream.getvalue(), msg=">>>\n%s\n===\n%s\n<<<'" % (expected_output_string, output_stream.getvalue()))
-
-        output_stream.close()
-        intput_stream.close()
+''')
 
 if __name__ == '__main__':
     unittest.main()
