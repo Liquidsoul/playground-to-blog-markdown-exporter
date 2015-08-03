@@ -45,6 +45,16 @@ class playgroundExportToMarkdownTestCase(unittest.TestCase):
         output_stream.close()
         intput_stream.close()
 
+    def testExportPageContentToMarkdown_exportJekyllTitle(self):
+        self._exportPageContentToMarkdownTest('''//: # This is the title we want
+//: This is markdown text.
+''', '''---
+layout: post
+title: This is the title we want
+---
+This is markdown text.
+''')
+
     def testExportPageContentToMarkdown_fullMarkdown(self):
         self._exportPageContentToMarkdownTest('''//: This is a markdown text
 //: on multiple

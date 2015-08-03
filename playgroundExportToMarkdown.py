@@ -1,7 +1,11 @@
 #! env python
 
+import re
+
 start_code_tag = r'{% highlight swift linenos %}'
 end_code_tag = r'{% endhighlight %}'
+jekyll_page_export = True
+jekyll_page_layout = 'post'
 
 def pathsFromPageNameList(page_name_list):
     return map(lambda x: 'Pages/' + x + '.xcplaygroundpage/Contents.swift', page_name_list)
@@ -26,13 +30,23 @@ def listFilesFromXCPlaygroundData(data_stream):
         page_name_list.append(page_child.attrib['name'])
     return pathsFromPageNameList(page_name_list)
 
+def exportTitleFromLines(lines, output_stream):
+    title_pattern = re.compile(r'(\s*)//:\s#\s*(?P<title>.*)')
+    for l in lines:
+        match = title_pattern.match(l)
+        if match is not None:
+            output_stream.write('---\nlayout: %(layout)s\ntitle: %(title)s\n---\n' % {'layout': jekyll_page_layout, 'title': match.group('title')})
+            lines.remove(l)
+            return
+
 def exportPageContentToMarkdown(content_stream, output_stream):
     lines = content_stream.readlines()
-    import re
     empty_line_pattern = re.compile(r'^\s*$')
     markdown_pattern = re.compile(r'(\s*)//:\s(?P<content>.*)')
     page_links_pattern = re.compile(r'\[(Next|Previous)\]\(@(next|previous)\)')
     code_block = False
+    if jekyll_page_export:
+        exportTitleFromLines(lines, output_stream)
     for l in lines:
         if page_links_pattern.search(l) is not None:
             # we skip lines containing playground page links
