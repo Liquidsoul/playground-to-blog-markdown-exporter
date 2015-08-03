@@ -1,5 +1,8 @@
 #! env python
 
+start_code_tag = r'{% highlight swift linenos %}'
+end_code_tag = r'{% endhighlight %}'
+
 def pathsFromPageNameList(page_name_list):
     return map(lambda x: 'Pages/' + x + '.xcplaygroundpage/Contents.swift', page_name_list)
 
@@ -26,6 +29,7 @@ def listFilesFromXCPlaygroundData(data_stream):
 def exportPageContentToMarkdown(content_stream, output_stream):
     lines = content_stream.readlines()
     import re
+    empty_line_pattern = re.compile(r'^\s*$')
     markdown_pattern = re.compile(r'(\s*)//:\s(?P<content>.*)')
     code_block = False
     for l in lines:
@@ -33,12 +37,12 @@ def exportPageContentToMarkdown(content_stream, output_stream):
         if match is None:
             if not code_block:
                 code_block = True
-                output_stream.write('```Swift\n')
+                output_stream.write(start_code_tag + '\n')
             output_stream.write(l)
         else:
             if code_block:
                 code_block = False
-                output_stream.write('```\n')
+                output_stream.write(end_code_tag + '\n')
             output_stream.write(match.group('content') + '\n')
     return True
 

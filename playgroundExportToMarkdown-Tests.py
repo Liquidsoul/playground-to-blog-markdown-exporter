@@ -34,21 +34,69 @@ class playgroundExportToMarkdownTestCase(unittest.TestCase):
 
         stream.close()
 
-    def testExportPageContentToMarkdown(self):
-        intput_stream = StringIO(r'''//: Before test line
-Swift code
-//: After test line
+    def testExportPageContentToMarkdown_fullMarkdown(self):
+        intput_stream = StringIO('''//: This is a markdown text
+//: on multiple
+//: lines.
 ''')
-        expected_output_string = r'''Before test line
-```Swift
-Swift code
-```
-After test line
+        expected_output_string = '''This is a markdown text
+on multiple
+lines.
 '''
         output_stream = StringIO()
 
         playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
-        
+
+        self.assertEqual(expected_output_string, output_stream.getvalue())
+
+        output_stream.close()
+        intput_stream.close()
+
+    def testExportPageContentToMarkdown_codeNoLineBreaks(self):
+        intput_stream = StringIO('''//: This is the line before
+Swift code
+//: This is the line after
+''')
+        expected_output_string = '''This is the line before
+%(start_code_tag)s
+Swift code
+%(end_code_tag)s
+This is the line after
+''' % {
+    'start_code_tag': playgroundExportToMarkdown.start_code_tag,
+    'end_code_tag': playgroundExportToMarkdown.end_code_tag
+}
+        output_stream = StringIO()
+
+        playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
+
+        self.assertEqual(expected_output_string, output_stream.getvalue())
+
+        output_stream.close()
+        intput_stream.close()
+
+    def testExportPageContentToMarkdown_codeWithEmptyLines(self):
+        intput_stream = StringIO(r'''//: Before test line
+Swift code first line
+
+Swift code last line
+//: After test line
+''')
+        expected_output_string = r'''Before test line
+%(start_code_tag)s
+Swift code first line
+
+Swift code last line
+%(end_code_tag)s
+After test line
+''' % {
+    'start_code_tag': playgroundExportToMarkdown.start_code_tag,
+    'end_code_tag': playgroundExportToMarkdown.end_code_tag
+}
+        output_stream = StringIO()
+
+        playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
+
         self.assertEqual(expected_output_string, output_stream.getvalue())
 
         output_stream.close()
