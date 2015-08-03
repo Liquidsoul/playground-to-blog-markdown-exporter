@@ -47,7 +47,7 @@ lines.
 
         playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
 
-        self.assertEqual(expected_output_string, output_stream.getvalue())
+        self.assertEqual(expected_output_string, output_stream.getvalue(), msg=">>>\n%s\n===\n%s\n<<<'" % (expected_output_string, output_stream.getvalue()))
 
         output_stream.close()
         intput_stream.close()
@@ -70,7 +70,7 @@ This is the line after
 
         playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
 
-        self.assertEqual(expected_output_string, output_stream.getvalue())
+        self.assertEqual(expected_output_string, output_stream.getvalue(), msg=">>>\n%s\n===\n%s\n<<<'" % (expected_output_string, output_stream.getvalue()))
 
         output_stream.close()
         intput_stream.close()
@@ -97,7 +97,7 @@ After test line
 
         playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
 
-        self.assertEqual(expected_output_string, output_stream.getvalue())
+        self.assertEqual(expected_output_string, output_stream.getvalue(), msg=">>>\n%s\n===\n%s\n<<<'" % (expected_output_string, output_stream.getvalue()))
 
         output_stream.close()
         intput_stream.close()
@@ -113,7 +113,7 @@ After test line
 
         playgroundExportToMarkdown.exportPageContentToMarkdown(intput_stream, output_stream)
         
-        self.assertEqual(expected_output_string, output_stream.getvalue())
+        self.assertEqual(expected_output_string, output_stream.getvalue(), msg=">>>\n%s\n===\n%s\n<<<'" % (expected_output_string, output_stream.getvalue()))
 
         output_stream.close()
         intput_stream.close()
