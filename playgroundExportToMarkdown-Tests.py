@@ -55,6 +55,12 @@ title: This is the title we want
 This is markdown text.
 ''')
 
+        self._exportPageContentToMarkdownTest('''//: ## This is not the title we want
+//: This is markdown text.
+''', '''## This is not the title we want
+This is markdown text.
+''')
+
     def testExportPageContentToMarkdown_fullMarkdown(self):
         self._exportPageContentToMarkdownTest('''//: This is a markdown text
 //: on multiple

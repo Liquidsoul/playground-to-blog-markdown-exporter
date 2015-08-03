@@ -31,7 +31,7 @@ def listFilesFromXCPlaygroundData(data_stream):
     return pathsFromPageNameList(page_name_list)
 
 def exportTitleFromLines(lines, output_stream):
-    title_pattern = re.compile(r'(\s*)//:\s#\s*(?P<title>.*)')
+    title_pattern = re.compile(r'(\s*)//:\s#\s(?P<title>.*)')
     for l in lines:
         match = title_pattern.match(l)
         if match is not None:
