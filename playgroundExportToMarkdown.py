@@ -2,7 +2,7 @@
 
 import re
 
-start_code_tag = r'{% highlight swift linenos %}'
+start_code_tag = r'{% highlight swift %}'
 end_code_tag = r'{% endhighlight %}'
 jekyll_page_export = True
 jekyll_page_layout = 'post'
